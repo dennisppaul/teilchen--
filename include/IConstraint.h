@@ -23,8 +23,6 @@
 
 #pragma once
 
-#include "Physics.h"
-
 class IConstraint {
 public:
     virtual ~IConstraint() = default;

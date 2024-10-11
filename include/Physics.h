@@ -25,12 +25,14 @@
 
 #include <iostream>
 #include <vector>
-#include "BasicParticle.h"
-#include "Particle.h"
+
+#include "IParticle.h"
 #include "IForce.h"
 #include "IConstraint.h"
 #include "IIntegrator.h"
+#include "Particle.h"
 #include "PVector.h"
+#include "Spring.h"
 
 using namespace umgebung;
 
@@ -49,7 +51,7 @@ public:
 private:
     std::vector<std::shared_ptr<IConstraint>> mConstraints;
     std::vector<std::shared_ptr<IForce>>      mForces;
-    std::vector<std::shared_ptr<Particle>>    mParticles;
+    std::vector<std::shared_ptr<IParticle>>   mParticles;
     std::shared_ptr<IIntegrator>              mIntegrator;
 
 public:
@@ -59,8 +61,7 @@ public:
         return ++oID;
     }
 
-    // Particle management
-    bool add(const std::shared_ptr<Particle>& pParticle, bool pPreventDuplicates = false) {
+    bool add(const std::shared_ptr<IParticle>& pParticle, const bool pPreventDuplicates = false) {
         if (pPreventDuplicates) {
             auto it = std::find(mParticles.begin(), mParticles.end(), pParticle);
             if (it != mParticles.end()) {
@@ -71,66 +72,66 @@ public:
         return true;
     }
 
-    void add(const std::shared_ptr<Particle>& pParticle) {
+    void add(const std::shared_ptr<IParticle>& pParticle) {
         mParticles.push_back(pParticle);
     }
 
-    void add(const std::vector<std::shared_ptr<Particle>>& pParticles) {
+    void add(const std::vector<std::shared_ptr<IParticle>>& pParticles) {
         mParticles.insert(mParticles.end(), pParticles.begin(), pParticles.end());
     }
 
-    void remove(const std::shared_ptr<Particle>& pParticle) {
+    void remove(const std::shared_ptr<IParticle>& pParticle) {
         mParticles.erase(std::remove(mParticles.begin(), mParticles.end(), pParticle), mParticles.end());
     }
 
-    void remove(const std::vector<std::shared_ptr<Particle>>& pParticles) {
+    void remove(const std::vector<std::shared_ptr<IParticle>>& pParticles) {
         for (const auto& p: pParticles) {
             remove(p);
         }
     }
 
-    const std::vector<std::shared_ptr<Particle>>& particles() const {
+    const std::vector<std::shared_ptr<IParticle>>& particles() const {
         return mParticles;
     }
 
-    std::shared_ptr<Particle> particles(int pIndex) const {
+    IParticlePtr particles(const int pIndex) const {
         return mParticles.at(pIndex);
     }
 
-    std::shared_ptr<BasicParticle> makeParticle(const PVector& pPosition) {
+    ParticlePtr makeParticle() {
+        auto mParticle = std::make_shared<Particle>();
+        mParticles.push_back(mParticle);
+        return mParticle;
+    }
+
+    ParticlePtr makeParticle(const PVector& pPosition) {
         auto mParticle = makeParticle();
         mParticle->setPositionRef(pPosition);
         mParticle->old_position() = mParticle->position();
         return mParticle;
     }
 
-    std::shared_ptr<BasicParticle> makeParticle() {
-        auto mParticle = std::make_shared<BasicParticle>();
-        mParticles.push_back(mParticle);
-        return mParticle;
-    }
-
-    std::shared_ptr<BasicParticle> makeParticle(float x, float y) {
+    ParticlePtr makeParticle(const float x, const float y) {
         auto mParticle = makeParticle();
         mParticle->position().set(x, y);
         mParticle->old_position() = mParticle->position();
         return mParticle;
     }
 
-    std::shared_ptr<BasicParticle> makeParticle(float x, float y, float z) {
+    ParticlePtr makeParticle(const float x, const float y, const float z) {
         auto mParticle = makeParticle();
         mParticle->position().set(x, y, z);
         mParticle->old_position() = mParticle->position();
         return mParticle;
     }
 
-    std::shared_ptr<BasicParticle> makeParticle(float x, float y, float z, float pMass) {
+    ParticlePtr makeParticle(const float x, const float y, const float z, const float pMass) {
         auto mParticle = makeParticle(x, y, z);
         mParticle->mass(pMass);
         return mParticle;
     }
 
-    std::shared_ptr<BasicParticle> makeParticle(const PVector& pPosition, float pMass) {
+    ParticlePtr makeParticle(const PVector& pPosition, const float pMass) {
         auto mParticle = makeParticle(pPosition);
         mParticle->mass(pMass);
         return mParticle;
@@ -179,11 +180,11 @@ public:
         return mForces;
     }
 
-    std::shared_ptr<IForce> forces(int pIndex) const {
+    std::shared_ptr<IForce> forces(const int pIndex) const {
         return mForces.at(pIndex);
     }
 
-    void applyForces(float pDeltaTime) {
+    void applyForces(const float pDeltaTime) {
         for (const auto& p: mParticles) {
             if (!p->fixed()) {
                 p->accumulateInnerForce(pDeltaTime);
@@ -197,7 +198,42 @@ public:
         }
     }
 
-    // Constraint management
+    template<typename T>
+    std::shared_ptr<T> makeForce() {
+        std::shared_ptr<T> mForce;
+        try {
+            mForce = std::make_shared<T>();
+            mForces.push_back(mForce);
+        } catch (const std::exception& ex) {
+            mForce = nullptr;
+        }
+        return mForce;
+    }
+
+    std::shared_ptr<Spring> makeSpring(std::shared_ptr<IParticle> pA, std::shared_ptr<IParticle> pB) {
+        auto mSpring = std::make_shared<Spring>(pA, pB);
+        mForces.push_back(mSpring);
+        return mSpring;
+    }
+
+    std::shared_ptr<Spring> makeSpring(std::shared_ptr<IParticle> pA, std::shared_ptr<IParticle> pB, float pRestLength) {
+        auto mSpring = std::make_shared<Spring>(pA, pB, pRestLength);
+        mForces.push_back(mSpring);
+        return mSpring;
+    }
+
+    std::shared_ptr<Spring> makeSpring(std::shared_ptr<IParticle> pA, std::shared_ptr<IParticle> pB, float pSpringConstant, float pSpringDamping) {
+        auto mSpring = std::make_shared<Spring>(pA, pB, pSpringConstant, pSpringDamping);
+        mForces.push_back(mSpring);
+        return mSpring;
+    }
+
+    std::shared_ptr<Spring> makeSpring(std::shared_ptr<IParticle> pA, std::shared_ptr<IParticle> pB, float pSpringConstant, float pSpringDamping, float pRestLength) {
+        auto mSpring = std::make_shared<Spring>(pA, pB, pSpringConstant, pSpringDamping, pRestLength);
+        mForces.push_back(mSpring);
+        return mSpring;
+    }
+
     void add(const std::shared_ptr<IConstraint>& pConstraint) {
         mConstraints.push_back(pConstraint);
     }
@@ -214,11 +250,10 @@ public:
         return mConstraints;
     }
 
-    std::shared_ptr<IConstraint> constraints(int pIndex) const {
+    std::shared_ptr<IConstraint> constraints(const int pIndex) const {
         return mConstraints.at(pIndex);
     }
 
-    // Integrator management
     void setIntegratorRef(const std::shared_ptr<IIntegrator>& pIntegrator) {
         mIntegrator = pIntegrator;
     }
@@ -227,20 +262,20 @@ public:
         return mIntegrator;
     }
 
-    void step(float pDeltaTime, int pIterations) {
+    void step(const float pDeltaTime, const int pIterations) {
         for (int i = 0; i < pIterations; ++i) {
             step(pDeltaTime / static_cast<float>(pIterations));
         }
     }
 
-    void step(float pDeltaTime) {
+    void step(const float pDeltaTime) {
         applyForces(pDeltaTime);
         mIntegrator->step(pDeltaTime, *this);
         handleParticles(pDeltaTime);
     }
 
 private:
-    void handleParticles(float pDeltaTime) {
+    void handleParticles(const float pDeltaTime) {
         for (auto& p: mParticles) {
             p->force().set(0, 0, 0);
             p->age(p->age() + pDeltaTime);

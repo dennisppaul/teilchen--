@@ -1,5 +1,5 @@
 /*
- * Teilchen++
+* Teilchen++
  *
  * This file is part of the *teilchen* library (https://github.com/dennisppaul/teilchen).
  * Copyright (c) 2024 Dennis P Paul.
@@ -21,18 +21,20 @@
  *
  */
 
-#pragma once
+#include "Spring.h"
+#include "Physics.h"
 
-class Physics;
-
-class IForce {
-public:
-    virtual ~IForce() = default;
-
-    virtual void apply(float pDeltaTime, Physics& pParticleSystem) = 0;
-    virtual bool dead() const                                      = 0;
-    virtual void dead(bool pDead)                                  = 0;
-    virtual bool active() const                                    = 0;
-    virtual void active(bool pActiveState)                         = 0;
-    virtual long ID() const                                        = 0;
-};
+Spring::Spring(IParticlePtr pA,
+               IParticlePtr pB,
+       const float pSpringConstant,
+       const float pSpringDamping,
+       const float pRestLength)
+    : mA(std::move(pA)),
+      mB(std::move(pB)),
+      mActive(true),
+      mDead(false),
+      mOneWay(false),
+      mRestLength(pRestLength),
+      mSpringConstant(pSpringConstant),
+      mSpringDamping(pSpringDamping),
+      mID(Physics::getUniqueID()) {}

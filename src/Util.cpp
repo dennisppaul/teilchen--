@@ -1,5 +1,5 @@
 /*
- * Teilchen++
+* Teilchen++
  *
  * This file is part of the *teilchen* library (https://github.com/dennisppaul/teilchen).
  * Copyright (c) 2024 Dennis P Paul.
@@ -21,18 +21,13 @@
  *
  */
 
-#pragma once
+#include "Util.h"
+#include "Physics.h"
 
-class Physics;
+IParticlePtr Util::findParticleByProximity(Physics* pPhysics, float x, float y, float z, float pSelectionRadius) {
+    return findParticleByProximity(pPhysics->particles(), PVector(x, y, z), pSelectionRadius);
+}
 
-class IForce {
-public:
-    virtual ~IForce() = default;
-
-    virtual void apply(float pDeltaTime, Physics& pParticleSystem) = 0;
-    virtual bool dead() const                                      = 0;
-    virtual void dead(bool pDead)                                  = 0;
-    virtual bool active() const                                    = 0;
-    virtual void active(bool pActiveState)                         = 0;
-    virtual long ID() const                                        = 0;
-};
+IParticlePtr Util::findParticleByProximity(Physics* pPhysics, const PVector& pPosition, float pSelectionRadius) {
+    return findParticleByProximity(pPhysics->particles(), pPosition, pSelectionRadius);
+}
