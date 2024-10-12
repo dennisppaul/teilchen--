@@ -58,10 +58,10 @@ class UmgebungApp final : public PApplet {
         mPhysics.step(mDeltaTime);
 
         /* draw */
-        background(1);
+        background(1.0f);
 
         /* draw all the particles in particle system */
-        fill(0);
+        fill(0.0f);
         noStroke();
         for (int i = 0; i < mPhysics.particles().size(); i++) {
             Particle* mParticle = mPhysics.particles(i);
@@ -75,9 +75,9 @@ class UmgebungApp final : public PApplet {
         ellipse(mAttractorPtr->position().x, mAttractorPtr->position().y, mAttractorPtr->radius() * 2, mAttractorPtr->radius() * 2);
         if (mAttractorPtr->strength() < 0) {
             noStroke();
-            fill(0);
+            fill(0.0f);
         } else {
-            stroke(0);
+            stroke(0.0f);
             // strokeWeight(4.0f);
         }
         ellipse(mAttractorPtr->position().x, mAttractorPtr->position().y, mAttractorPtr->radius() / 2, mAttractorPtr->radius() / 2);

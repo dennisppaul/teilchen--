@@ -1,6 +1,6 @@
 #include "Umgebung.h"
 #include "Physics.h"
-#include "BasicParticle.h"
+#include "Particle.h"
 
 using namespace umgebung;
 
@@ -13,7 +13,7 @@ class UmgebungApp final : public PApplet {
      */
 
     Particle* mParticle = nullptr;
-    Physics     mPhysics;
+    Physics   mPhysics;
 
     void settings() override {
         size(640, 480);
@@ -27,8 +27,8 @@ class UmgebungApp final : public PApplet {
         const float mDeltaTime = 1.0f / frameRate;
         mPhysics.step(mDeltaTime);
 
-        background(1);
-        fill(0);
+        background(1.0f);
+        fill(0.0f);
         noStroke();
         ellipse(mParticle->position().x, mParticle->position().y, 5, 5);
 

@@ -29,10 +29,10 @@
 
 #include "PVector.h"
 #include "Particle.h"
+#include "Physics.h"
+
 // #include "TriangleDeflector.h"
 // #include "TriangleDeflectorIndexed.h"
-
-class Physics;
 
 class Util {
     static constexpr auto     ALMOST_THRESHOLD = 0.001f;
@@ -85,8 +85,8 @@ public:
         return v * (1.5f - half * v * v);
     }
 
-    static Particle* findParticleByProximity(Physics* pPhysics, float x, float y, float z, float pSelectionRadius);
-    static Particle* findParticleByProximity(Physics* pPhysics, const PVector& pPosition, float pSelectionRadius);
+    static Particle* findParticleByProximity(Physics& pPhysics, float x, float y, float z, float pSelectionRadius);
+    static Particle* findParticleByProximity(Physics& pPhysics, const PVector& pPosition, float pSelectionRadius);
 
     static Particle* findParticleByProximity(const std::vector<Particle*>& pParticles, float x, float y, float z, float pSelectionRadius) {
         return findParticleByProximity(pParticles, PVector(x, y, z), pSelectionRadius);
@@ -103,7 +103,7 @@ public:
             return nullptr;
         }
         Particle* mClosestParticle = mCloseParticles[0];
-        float      mClosestDistance = PVector::dist(pPosition, mClosestParticle->position());
+        float     mClosestDistance = PVector::dist(pPosition, mClosestParticle->position());
         for (size_t i = 1; i < mCloseParticles.size(); i++) {
             const float mDistance = PVector::dist(pPosition, mCloseParticles[i]->position());
             if (mDistance < mClosestDistance) {
@@ -226,4 +226,21 @@ public:
     static bool is_parallel(const PVector& vector, const PVector& normal) {
         return PVector::dot(vector, normal) == 0;
     }
+
+    static void reflect(PVector& direction, const PVector& normal, float coefficient_of_restitution) {
+        // Normal component
+        PVector mNormalComponent = normal;            // Set normal
+        mNormalComponent.mult(normal.dot(direction)); // Scale by dot product of normal and direction
+
+        // Tangent component
+        const PVector mTangentComponent = PVector::sub(direction, mNormalComponent); // Subtract normal component from direction
+
+        // Negate normal component with coefficient of restitution
+        mNormalComponent.mult(-coefficient_of_restitution);
+
+        // Set reflection vector: direction = tangent component + negated normal component
+        direction = PVector::add(mTangentComponent, mNormalComponent);
+    }
+
+    static void reflectVelocity(Particle& pParticle, const PVector& pNormal, float pCoefficientOfRestitution);
 };

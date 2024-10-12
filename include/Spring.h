@@ -26,7 +26,6 @@
 #include "Force.h"
 #include "Connection.h"
 #include "Particle.h"
-#include "Util.h"
 #include "PVector.h"
 
 class Spring final : public Force, public Connection {
@@ -115,50 +114,7 @@ public:
         mOneWay = pOneWayState;
     }
 
-    void apply(float pDeltaTime, Physics& pParticleSystem) override {
-        if (!(mA->fixed() && mB->fixed())) {
-            PVector mAB = PVector::sub(mA->position(), mB->position());
-            float   mInvDistance;
-            float   mDistance;
-#if USE_FAST_SQRT == 1
-            float mInvDistanceSquared = mAB.magSq();
-            if (mInvDistanceSquared == 0.0f) {
-                return;
-            }
-            mInvDistance = Util::fastInverseSqrt(mInvDistanceSquared);
-            mDistance    = 1.0f / mInvDistance;
-#else
-            mDistance = mAB.mag();
-            if (mDistance == 0.0f) {
-                return;
-            }
-            mInvDistance = 1.0f / mDistance;
-#endif // USE_FAST_SQRT
-            float   mSpringForce = -mSpringConstant * (mDistance - mRestLength);
-            PVector mABV         = PVector::sub(mA->velocity(), mB->velocity());
-            PVector mForce       = PVector(-mSpringForce, -mSpringForce, -mSpringForce);
-            Util::scale(mABV, mAB);
-            mABV.mult(mInvDistance);
-            mABV.mult(mSpringDamping);
-            mForce.add(mABV);
-            mAB.mult(-mInvDistance);
-            Util::scale(mForce, mAB);
-
-            if (mOneWay) {
-                if (!mB->fixed()) {
-                    mForce.mult(-2);
-                    mB->force().add(mForce);
-                }
-            } else {
-                if (!mA->fixed()) {
-                    mA->force().add(mForce);
-                }
-                if (!mB->fixed()) {
-                    mB->force().sub(mForce);
-                }
-            }
-        }
-    }
+    void apply(float pDeltaTime, Physics& pParticleSystem) override ;
 
     bool dead() const override {
         return mA->dead() || mB->dead() || mDead;

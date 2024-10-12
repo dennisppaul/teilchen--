@@ -57,7 +57,7 @@ class UmgebungApp final : public PApplet {
         noFill();
         stroke(0, 63);
         line(mSpring->a()->position().x, mSpring->a()->position().y, mSpring->b()->position().x, mSpring->b()->position().y);
-        fill(0);
+        fill(0.0f);
         noStroke();
         ellipse(mSpring->a()->position().x, mSpring->a()->position().y, 5, 5);
         ellipse(mSpring->b()->position().x, mSpring->b()->position().y, 15, 15);

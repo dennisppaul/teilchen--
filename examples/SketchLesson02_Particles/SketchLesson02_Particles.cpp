@@ -19,6 +19,7 @@ class UmgebungApp final : public PApplet {
 
     void settings() override {
         size(640, 480);
+        antialiasing = 8;
     }
 
     void setup() override {
@@ -51,7 +52,7 @@ class UmgebungApp final : public PApplet {
 
         /* draw all the particles in the system */
         background(1);
-        fill(0);
+        fill(0.0f);
         noStroke();
         for (int i = 0; i < mPhysics.particles().size(); i++) {
             Particle* mParticle = mPhysics.particles(i);

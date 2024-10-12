@@ -2,6 +2,7 @@
 #include "Physics.h"
 #include "Spring.h"
 #include "ViscousDrag.h"
+#include "Util.h"
 
 using namespace umgebung;
 
@@ -14,7 +15,7 @@ class UmgebungApp final : public PApplet {
      */
 
     /* create a particle system */
-    Physics    mPhysics;
+    Physics   mPhysics;
     Particle* mRoot = nullptr;
 
     void settings() override {
@@ -36,10 +37,10 @@ class UmgebungApp final : public PApplet {
         /* create a particle at mouse position and connect it to the root particle through a spring */
         if (isMousePressed) {
             /* find the particle closest to the mouse */
-            Particle* mNeighborParticle = Util::findParticleByProximity(&mPhysics, mouseX, mouseY, 0, 20);
+            Particle* mNeighborParticle = Util::findParticleByProximity(mPhysics, mouseX, mouseY, 0, 20);
             if (mNeighborParticle != nullptr) {
                 Particle* mParticle = mPhysics.makeParticle(mouseX, mouseY, 0);
-                Spring*    mSpring   = mPhysics.makeSpring(mNeighborParticle, mParticle);
+                Spring*   mSpring   = mPhysics.makeSpring(mNeighborParticle, mParticle);
                 /* restlength defines the desired length of the spring. in this case it is the
                 distance between the two particles. */
                 const float mRestlength = mSpring->restlength();
@@ -53,22 +54,23 @@ class UmgebungApp final : public PApplet {
         mPhysics.step(mDeltaTime);
 
         /* draw particles and connecting line */
-        background(1);
+        background(1.0f);
 
         /* draw springs */
         noFill();
-        stroke(0, 0.125f);
+        stroke(0.0f, 0.125f);
         for (const auto& i: mPhysics.forces()) {
             if (Util::is_instance_of<Spring>(i)) {
-                auto mSSpring = dynamic_cast<Spring*>(i);
+                const auto mSSpring = dynamic_cast<Spring*>(i);
                 line(mSSpring->a()->position().x,
                      mSSpring->a()->position().y,
                      mSSpring->b()->position().x,
                      mSSpring->b()->position().y);
             }
         }
+
         /* draw particles */
-        fill(0);
+        fill(0.0f);
         noStroke();
         for (const auto& i: mPhysics.particles()) {
             ellipse(i->position().x, i->position().y, 5, 5);

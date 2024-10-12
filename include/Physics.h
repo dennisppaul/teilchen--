@@ -150,29 +150,30 @@ public:
         }
     }
 
-    // // Force management
-    // bool add(const Spring* pSpring, bool pPreventDuplicates = false) {
-    //     if (pPreventDuplicates) {
-    //         for (const auto& f : mForces) {
-    //             auto s = std::dynamic_pointer_cast<Spring>(f);
-    //             if (s && (s == pSpring || (s->a() == pSpring->a() && s->b() == pSpring->b()) || (s->b() == pSpring->a() && s->a() == pSpring->b()))) {
-    //                 return false;
-    //             }
-    //         }
-    //     }
-    //     mForces.push_back(pSpring);
-    //     return true;
-    // }
+    /* force management */
+
+    bool add(Spring* pSpring, const bool pPreventDuplicates = false) {
+        if (pPreventDuplicates) {
+            for (const auto& f: mForces) {
+                auto s = dynamic_cast<Spring*>(f);
+                if (s && (s == pSpring || (s->a() == pSpring->a() && s->b() == pSpring->b()) || (s->b() == pSpring->a() && s->a() == pSpring->b()))) {
+                    return false;
+                }
+            }
+        }
+        mForces.push_back(pSpring);
+        return true;
+    }
 
     void add(Force* pForce) {
         mForces.push_back(pForce);
     }
 
-    void addForces(const std::vector<Force*>& pForces) {
+    void addForces(std::vector<Force*>& pForces) {
         mForces.insert(mForces.end(), pForces.begin(), pForces.end());
     }
 
-    void remove(const Force* pForce) {
+    void remove(Force* pForce) {
         mForces.erase(std::remove(mForces.begin(), mForces.end(), pForce), mForces.end());
     }
 
@@ -270,22 +271,16 @@ public:
     }
 
     void step(const float pDeltaTime) {
-        applyForces(pDeltaTime);
+        handleForces();
         mIntegrator->step(pDeltaTime, *this);
         handleParticles(pDeltaTime);
+        handleConstraints();
+        postHandleParticles(pDeltaTime);
     }
 
 private:
-    void handleParticles(const float pDeltaTime) {
-        for (const auto& p: mParticles) {
-            p->force().set(0, 0, 0);
-            p->age(p->age() + pDeltaTime);
-
-            if (p->dead()) {
-                remove(p);
-            }
-
-            // Handle optimization and NaN recovery, if needed
-        }
-    }
+    void handleForces();
+    void handleParticles(float pDeltaTime);
+    void handleConstraints();
+    void postHandleParticles(float pDeltaTime) const;
 };

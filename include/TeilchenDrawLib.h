@@ -23,16 +23,26 @@
 
 #pragma once
 
-class Physics;
+#include "Physics.h"
+#include "Util.h"
+#include "PGraphics.h"
 
-class Constraint {
+class TeilchenDrawLib {
 public:
-    virtual ~Constraint() = default;
-
-    virtual void apply(Physics& pParticleSystem) = 0;
-    virtual bool active() const                  = 0;
-    virtual void active(bool pActiveState)       = 0;
-    virtual bool dead() const                    = 0;
-    virtual void dead(bool pDead)                = 0;
-    virtual long ID() const                      = 0;
+    static void drawSprings(PGraphics* g, const Physics& pParticleSystem, const uint32_t pColor) {
+        if (g == nullptr) {
+            return;
+        }
+        /* draw springs */
+        g->stroke(pColor);
+        for (int i = 0; i < pParticleSystem.forces().size(); i++) {
+            if (Util::is_instance_of<Spring>(pParticleSystem.forces(i))) {
+                auto* mSpring = dynamic_cast<Spring*>(pParticleSystem.forces(i));
+                g->line(mSpring->a()->position().x,
+                        mSpring->a()->position().y,
+                        mSpring->b()->position().x,
+                        mSpring->b()->position().y);
+            }
+        }
+    }
 };

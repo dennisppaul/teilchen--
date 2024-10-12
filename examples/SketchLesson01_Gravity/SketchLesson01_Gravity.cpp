@@ -40,8 +40,8 @@ class UmgebungApp final : public PApplet {
         mPhysics.step(mDeltaTime);
 
         /* draw particle */
-        background(1);
-        fill(0);
+        background(1.0f);
+        fill(0.0f);
         noStroke();
         ellipse(mParticle->position().x, mParticle->position().y, 5, 5);
 
