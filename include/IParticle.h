@@ -52,5 +52,3 @@ public:
     virtual void     still(bool pStill)                       = 0;
     virtual long     ID() const                               = 0;
 };
-
-using IParticlePtr = std::shared_ptr<IParticle>;

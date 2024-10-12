@@ -102,9 +102,7 @@ public:
         return mID;
     }
 
-    static std::shared_ptr<Teleporter> make() {
-        return std::make_shared<Teleporter>();
+    static Teleporter* make() {
+        return new Teleporter();
     }
 };
-
-using TeleporterPtr = std::shared_ptr<Teleporter>;

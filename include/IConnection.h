@@ -29,6 +29,6 @@ class IConnection {
 public:
     virtual ~IConnection() = default;
 
-    virtual IParticlePtr a() = 0;
-    virtual IParticlePtr b() = 0;
+    virtual IParticle* a() = 0;
+    virtual IParticle* b() = 0;
 };

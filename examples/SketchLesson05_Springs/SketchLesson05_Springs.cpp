@@ -14,8 +14,8 @@ class UmgebungApp final : public PApplet {
      */
 
     /* create a particle system */
-    Physics     mPhysics;
-    ParticlePtr mRoot;
+    Physics   mPhysics;
+    Particle* mRoot = nullptr;
 
     void settings() override {
         size(640, 480);
@@ -36,10 +36,10 @@ class UmgebungApp final : public PApplet {
         /* create a particle at mouse position and connect it to the root particle through a spring */
         if (isMousePressed) {
             /* find the particle closest to the mouse */
-            const IParticlePtr mNeighborParticle = Util::findParticleByProximity(&mPhysics, mouseX, mouseY, 0, 20);
+            IParticle* mNeighborParticle = Util::findParticleByProximity(&mPhysics, mouseX, mouseY, 0, 20);
             if (mNeighborParticle != nullptr) {
-                const IParticlePtr mParticle = mPhysics.makeParticle(mouseX, mouseY, 0);
-                const SpringPtr    mSpring   = mPhysics.makeSpring(mNeighborParticle, mParticle);
+                IParticle* mParticle = mPhysics.makeParticle(mouseX, mouseY, 0);
+                Spring*    mSpring   = mPhysics.makeSpring(mNeighborParticle, mParticle);
                 /* restlength defines the desired length of the spring. in this case it is the
                 distance between the two particles. */
                 const float mRestlength = mSpring->restlength();
@@ -60,7 +60,7 @@ class UmgebungApp final : public PApplet {
         stroke(0, 0.125f);
         for (const auto& i: mPhysics.forces()) {
             if (Util::is_instance_of<Spring>(i)) {
-                const auto mSSpring = std::dynamic_pointer_cast<Spring>(i);
+                auto mSSpring = dynamic_cast<Spring*>(i);
                 line(mSSpring->a()->position().x,
                      mSSpring->a()->position().y,
                      mSSpring->b()->position().x,
@@ -73,6 +73,10 @@ class UmgebungApp final : public PApplet {
         for (const auto& i: mPhysics.particles()) {
             ellipse(i->position().x, i->position().y, 5, 5);
         }
+    }
+
+    void finish() override {
+        println("Physics system had ", mPhysics.particles().size(), " particles and ", mPhysics.forces().size(), " forces.");
     }
 };
 

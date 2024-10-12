@@ -24,8 +24,8 @@
 #include "Spring.h"
 #include "Physics.h"
 
-Spring::Spring(IParticlePtr pA,
-               IParticlePtr pB,
+Spring::Spring(IParticle* pA,
+               IParticle* pB,
        const float pSpringConstant,
        const float pSpringDamping,
        const float pRestLength)

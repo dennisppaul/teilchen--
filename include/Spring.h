@@ -31,36 +31,36 @@
 
 class Spring final : public IForce, public IConnection {
 
-    IParticlePtr mA;
-    IParticlePtr mB;
-    bool         mActive;
-    bool         mDead;
-    bool         mOneWay;
-    float        mRestLength;
-    float        mSpringConstant;
-    float        mSpringDamping;
-    const long   mID;
+    IParticle* mA;
+    IParticle* mB;
+    bool       mActive;
+    bool       mDead;
+    bool       mOneWay;
+    float      mRestLength;
+    float      mSpringConstant;
+    float      mSpringDamping;
+    const long mID;
 
 public:
 #define USE_FAST_SQRT 1
 
-    Spring(const IParticlePtr& pA, const IParticlePtr& pB)
+    Spring(IParticle* pA, IParticle* pB)
         : Spring(pA,
                  pB,
                  2.0f,
                  0.1f,
                  PVector::dist(pA->position(), pB->position())) {}
 
-    Spring(IParticlePtr pA,
-           IParticlePtr pB,
-           float        pSpringConstant,
-           float        pSpringDamping,
-           float        pRestLength);
+    Spring(IParticle* pA,
+           IParticle* pB,
+           float      pSpringConstant,
+           float      pSpringDamping,
+           float      pRestLength);
 
-    Spring(const IParticlePtr& pA, const IParticlePtr& pB, const float pRestLength)
+    Spring(IParticle* pA, IParticle* pB, const float pRestLength)
         : Spring(pA, pB, 2.0f, 0.1f, pRestLength) {}
 
-    Spring(const IParticlePtr& pA, const IParticlePtr& pB, const float pSpringConstant, const float pSpringDamping)
+    Spring(IParticle* pA, IParticle* pB, const float pSpringConstant, const float pSpringDamping)
         : Spring(pA, pB, pSpringConstant, pSpringDamping, PVector::dist(pA->position(), pB->position())) {}
 
     void setRestLengthByPosition() {
@@ -75,19 +75,19 @@ public:
         mRestLength = pRestLength;
     }
 
-    IParticlePtr a() override {
+    IParticle* a() override {
         return mA;
     }
 
-    IParticlePtr b() override {
+    IParticle* b() override {
         return mB;
     }
 
-    IParticlePtr a(const IParticlePtr& pA) {
+    IParticle* a(IParticle* pA) {
         return mA = pA;
     }
 
-    IParticlePtr b(const IParticlePtr& pB) {
+    IParticle* b(IParticle* pB) {
         return mB = pB;
     }
 
@@ -180,21 +180,19 @@ public:
         return mID;
     }
 
-    static std::shared_ptr<Spring> make(const IParticlePtr& pA, const IParticlePtr& pB) {
-        return std::make_shared<Spring>(pA, pB);
+    static Spring* make(IParticle* pA, IParticle* pB) {
+        return new Spring(pA, pB);
     }
 
-    static std::shared_ptr<Spring> make(const IParticlePtr& pA, const IParticlePtr& pB, float pSpringConstant, float pSpringDamping, float pRestLength) {
-        return std::make_shared<Spring>(pA, pB, pSpringConstant, pSpringDamping, pRestLength);
+    static Spring* make(IParticle* pA, IParticle* pB, float pSpringConstant, float pSpringDamping, float pRestLength) {
+        return new Spring(pA, pB, pSpringConstant, pSpringDamping, pRestLength);
     }
 
-    static std::shared_ptr<Spring> make(const IParticlePtr& pA, const IParticlePtr& pB, float pRestLength) {
-        return std::make_shared<Spring>(pA, pB, pRestLength);
+    static Spring* make(IParticle* pA, IParticle* pB, float pRestLength) {
+        return new Spring(pA, pB, pRestLength);
     }
 
-    static std::shared_ptr<Spring> make(const IParticlePtr& pA, const IParticlePtr& pB, float pSpringConstant, float pSpringDamping) {
-        return std::make_shared<Spring>(pA, pB, pSpringConstant, pSpringDamping);
+    static Spring* make(IParticle* pA, IParticle* pB, float pSpringConstant, float pSpringDamping) {
+        return new Spring(pA, pB, pSpringConstant, pSpringDamping);
     }
 };
-
-using SpringPtr = std::shared_ptr<Spring>;

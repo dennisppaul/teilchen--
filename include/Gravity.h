@@ -79,17 +79,17 @@ public:
         return mID;
     }
 
-    static std::shared_ptr<Gravity> make() {
-        return std::make_shared<Gravity>();
+    static Gravity* make() {
+        return new Gravity();
     }
 
-    static std::shared_ptr<Gravity> make(const PVector& pForce) {
-        return std::make_shared<Gravity>(pForce);
+    static Gravity* make(const PVector& pForce) {
+        return new Gravity(pForce);
     }
 
-    static std::shared_ptr<Gravity> make(const float pForceX, const float pForceY, const float pForceZ) {
-        return std::make_shared<Gravity>(pForceX, pForceY, pForceZ);
+    static Gravity* make(const float pForceX, const float pForceY, const float pForceZ) {
+        return new Gravity(pForceX, pForceY, pForceZ);
     }
 };
 
-using GravityPtr = std::shared_ptr<Gravity>;
+using GravityPtr = Gravity*;

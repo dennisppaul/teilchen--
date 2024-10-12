@@ -82,9 +82,7 @@ public:
     long     ID() const override { return mID; }
     void     accumulateInnerForce(float pDeltaTime) override {}
 
-    static std::shared_ptr<Particle> make() {
-        return std::make_shared<Particle>();
+    static Particle* make() {
+        return new Particle();
     }
 };
-
-using ParticlePtr       = std::shared_ptr<Particle>;

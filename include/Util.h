@@ -41,8 +41,8 @@ class Util {
 
 public:
     template<typename T, typename U>
-    static bool is_instance_of(const std::shared_ptr<U>& ptr) {
-        return std::dynamic_pointer_cast<T>(ptr) != nullptr;
+    static bool is_instance_of(const U* ptr) {
+        return dynamic_cast<const T*>(ptr) != nullptr;
     }
 
     static bool almost(const PVector& p0, const PVector& p1) {
@@ -85,15 +85,15 @@ public:
         return v * (1.5f - half * v * v);
     }
 
-    static IParticlePtr findParticleByProximity(Physics* pPhysics, float x, float y, float z, float pSelectionRadius);
-    static IParticlePtr findParticleByProximity(Physics* pPhysics, const PVector& pPosition, float pSelectionRadius);
+    static IParticle* findParticleByProximity(Physics* pPhysics, float x, float y, float z, float pSelectionRadius);
+    static IParticle* findParticleByProximity(Physics* pPhysics, const PVector& pPosition, float pSelectionRadius);
 
-    static IParticlePtr findParticleByProximity(const std::vector<std::shared_ptr<IParticle>>& pParticles, float x, float y, float z, float pSelectionRadius) {
+    static IParticle* findParticleByProximity(const std::vector<IParticle*>& pParticles, float x, float y, float z, float pSelectionRadius) {
         return findParticleByProximity(pParticles, PVector(x, y, z), pSelectionRadius);
     }
 
-    static IParticlePtr findParticleByProximity(const std::vector<std::shared_ptr<IParticle>>& pParticles, const PVector& pPosition, float pSelectionRadius) {
-        std::vector<std::shared_ptr<IParticle>> mCloseParticles;
+    static IParticle* findParticleByProximity(const std::vector<IParticle*>& pParticles, const PVector& pPosition, float pSelectionRadius) {
+        std::vector<IParticle*> mCloseParticles;
         for (const auto& p: pParticles) {
             if (PVector::dist(pPosition, p->position()) < pSelectionRadius) {
                 mCloseParticles.push_back(p);
@@ -102,8 +102,8 @@ public:
         if (mCloseParticles.empty()) {
             return nullptr;
         }
-        IParticlePtr mClosestParticle = mCloseParticles[0];
-        float        mClosestDistance = PVector::dist(pPosition, mClosestParticle->position());
+        IParticle* mClosestParticle = mCloseParticles[0];
+        float      mClosestDistance = PVector::dist(pPosition, mClosestParticle->position());
         for (size_t i = 1; i < mCloseParticles.size(); i++) {
             const float mDistance = PVector::dist(pPosition, mCloseParticles[i]->position());
             if (mDistance < mClosestDistance) {

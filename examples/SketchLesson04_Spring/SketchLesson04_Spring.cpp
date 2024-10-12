@@ -16,7 +16,7 @@ class UmgebungApp final : public PApplet {
 
     /* create a particle system */
     Physics   mPhysics;
-    SpringPtr mSpring;
+    Spring*   mSpring = nullptr;
 
     void settings() override {
         size(640, 480);
@@ -28,10 +28,10 @@ class UmgebungApp final : public PApplet {
         mPhysics.add(mDrag);
 
         /* create two particles that we can connect with a spring */
-        IParticlePtr mA = mPhysics.makeParticle();
+        IParticle* mA = mPhysics.makeParticle();
         mA->position().set(width / 2.0f - 50, height / 2.0f);
 
-        IParticlePtr mB = mPhysics.makeParticle();
+        IParticle* mB = mPhysics.makeParticle();
         mB->position().set(width / 2.0f + 50, height / 2.0f);
 
         /* create a spring force that connects two particles.

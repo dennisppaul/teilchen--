@@ -12,7 +12,7 @@ class UmgebungApp final : public PApplet {
      * drag mouse to fling particle.
      */
 
-    ParticlePtr mParticle = nullptr;
+    Particle* mParticle = nullptr;
     Physics     mPhysics;
 
     void settings() override {

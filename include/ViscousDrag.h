@@ -41,7 +41,7 @@ public:
     ViscousDrag() : ViscousDrag(1.0f) {}
 
     void apply(float pDeltaTime, Physics& pParticleSystem) override {
-        if (dynamic_cast<Verlet*>(pParticleSystem.getIntegrator().get()) != nullptr) {
+        if (dynamic_cast<Verlet*>(pParticleSystem.getIntegrator()) != nullptr) {
             return;
         }
 
@@ -78,13 +78,11 @@ public:
         return mID;
     }
 
-    static std::shared_ptr<ViscousDrag> make() {
-        return std::make_shared<ViscousDrag>();
+    static ViscousDrag* make() {
+        return new ViscousDrag();
     }
 
-    static std::shared_ptr<ViscousDrag> make(float pCoefficient) {
-        return std::make_shared<ViscousDrag>(pCoefficient);
+    static ViscousDrag* make(float pCoefficient) {
+        return new ViscousDrag(pCoefficient);
     }
 };
-
-using ViscousDragPtr = std::shared_ptr<ViscousDrag>;

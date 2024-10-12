@@ -15,7 +15,7 @@ class UmgebungApp final : public PApplet {
      * press mouse to toggle attractor between postive and *negative* attraction.
      */
 
-    AttractorPtr mAttractorPtr = Attractor::make();
+    Attractor* mAttractorPtr = Attractor::make();
 
     /* create a particle system */
     Physics mPhysics;
@@ -38,7 +38,7 @@ class UmgebungApp final : public PApplet {
 
         /* create some particles */
         for (int i = 0; i < 1000; i++) {
-            const IParticlePtr mParticle = mPhysics.makeParticle();
+            IParticle* mParticle = mPhysics.makeParticle();
             mParticle->position().set(random(width), random(height));
             mParticle->mass(random(1.0f, 5.0f));
         }
@@ -64,7 +64,7 @@ class UmgebungApp final : public PApplet {
         fill(0);
         noStroke();
         for (int i = 0; i < mPhysics.particles().size(); i++) {
-            const IParticlePtr mParticle = mPhysics.particles(i);
+            IParticle* mParticle = mPhysics.particles(i);
             ellipse(mParticle->position().x, mParticle->position().y, 5, 5);
         }
 
@@ -85,7 +85,7 @@ class UmgebungApp final : public PApplet {
 
     void mousePressed() override {
         /* flip the direction of the attractors strength. */
-        float mInvertedStrength = -1 * mAttractorPtr->strength();
+        const float mInvertedStrength = -1 * mAttractorPtr->strength();
         /* a negative strength turns the attractor into a repulsor */
         mAttractorPtr->strength(mInvertedStrength);
     }

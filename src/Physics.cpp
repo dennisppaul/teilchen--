@@ -25,7 +25,7 @@
 #include "Midpoint.h"
 
 Physics::Physics()
-    : mIntegrator(std::make_shared<Midpoint>()) {
+    : mIntegrator(new Midpoint()) {
 }
 
 bool Physics::VERBOSE                  = false;

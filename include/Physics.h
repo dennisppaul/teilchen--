@@ -49,10 +49,10 @@ public:
     bool HINT_SET_VELOCITY_FROM_PREVIOUS_POSITION = true;
 
 private:
-    std::vector<std::shared_ptr<IConstraint>> mConstraints;
-    std::vector<std::shared_ptr<IForce>>      mForces;
-    std::vector<std::shared_ptr<IParticle>>   mParticles;
-    std::shared_ptr<IIntegrator>              mIntegrator;
+    std::vector<IConstraint*> mConstraints;
+    std::vector<IForce*>      mForces;
+    std::vector<IParticle*>   mParticles;
+    IIntegrator*              mIntegrator;
 
 public:
     Physics();
@@ -61,9 +61,9 @@ public:
         return ++oID;
     }
 
-    bool add(const std::shared_ptr<IParticle>& pParticle, const bool pPreventDuplicates = false) {
+    bool add(IParticle* pParticle, const bool pPreventDuplicates = false) {
         if (pPreventDuplicates) {
-            auto it = std::find(mParticles.begin(), mParticles.end(), pParticle);
+            const auto it = std::find(mParticles.begin(), mParticles.end(), pParticle);
             if (it != mParticles.end()) {
                 return false;
             }
@@ -72,74 +72,74 @@ public:
         return true;
     }
 
-    void add(const std::shared_ptr<IParticle>& pParticle) {
+    void add(IParticle* pParticle) {
         mParticles.push_back(pParticle);
     }
 
-    void add(const std::vector<std::shared_ptr<IParticle>>& pParticles) {
+    void add(const std::vector<IParticle*>& pParticles) {
         mParticles.insert(mParticles.end(), pParticles.begin(), pParticles.end());
     }
 
-    void remove(const std::shared_ptr<IParticle>& pParticle) {
+    void remove(IParticle* pParticle) {
         mParticles.erase(std::remove(mParticles.begin(), mParticles.end(), pParticle), mParticles.end());
     }
 
-    void remove(const std::vector<std::shared_ptr<IParticle>>& pParticles) {
+    void remove(const std::vector<IParticle*>& pParticles) {
         for (const auto& p: pParticles) {
             remove(p);
         }
     }
 
-    const std::vector<std::shared_ptr<IParticle>>& particles() const {
+    const std::vector<IParticle*>& particles() const {
         return mParticles;
     }
 
-    IParticlePtr particles(const int pIndex) const {
+    IParticle* particles(const int pIndex) const {
         return mParticles.at(pIndex);
     }
 
-    ParticlePtr makeParticle() {
-        auto mParticle = std::make_shared<Particle>();
+    Particle* makeParticle() {
+        const auto mParticle = new Particle();
         mParticles.push_back(mParticle);
         return mParticle;
     }
 
-    ParticlePtr makeParticle(const PVector& pPosition) {
-        auto mParticle = makeParticle();
+    Particle* makeParticle(const PVector& pPosition) {
+        const auto mParticle = makeParticle();
         mParticle->setPositionRef(pPosition);
         mParticle->old_position() = mParticle->position();
         return mParticle;
     }
 
-    ParticlePtr makeParticle(const float x, const float y) {
-        auto mParticle = makeParticle();
+    Particle* makeParticle(const float x, const float y) {
+        const auto mParticle = makeParticle();
         mParticle->position().set(x, y);
         mParticle->old_position() = mParticle->position();
         return mParticle;
     }
 
-    ParticlePtr makeParticle(const float x, const float y, const float z) {
-        auto mParticle = makeParticle();
+    Particle* makeParticle(const float x, const float y, const float z) {
+        const auto mParticle = makeParticle();
         mParticle->position().set(x, y, z);
         mParticle->old_position() = mParticle->position();
         return mParticle;
     }
 
-    ParticlePtr makeParticle(const float x, const float y, const float z, const float pMass) {
-        auto mParticle = makeParticle(x, y, z);
+    Particle* makeParticle(const float x, const float y, const float z, const float pMass) {
+        const auto mParticle = makeParticle(x, y, z);
         mParticle->mass(pMass);
         return mParticle;
     }
 
-    ParticlePtr makeParticle(const PVector& pPosition, const float pMass) {
-        auto mParticle = makeParticle(pPosition);
+    Particle* makeParticle(const PVector& pPosition, const float pMass) {
+        const auto mParticle = makeParticle(pPosition);
         mParticle->mass(pMass);
         return mParticle;
     }
 
     template<typename T>
-    std::shared_ptr<T> makeParticle() {
-        auto mParticle = std::make_shared<T>();
+    T* makeParticle() {
+        auto mParticle = new T();
         mParticles.push_back(mParticle);
         return mParticle;
     }
@@ -151,7 +151,7 @@ public:
     }
 
     // // Force management
-    // bool add(const std::shared_ptr<Spring>& pSpring, bool pPreventDuplicates = false) {
+    // bool add(const Spring* pSpring, bool pPreventDuplicates = false) {
     //     if (pPreventDuplicates) {
     //         for (const auto& f : mForces) {
     //             auto s = std::dynamic_pointer_cast<Spring>(f);
@@ -164,23 +164,23 @@ public:
     //     return true;
     // }
 
-    void add(const std::shared_ptr<IForce>& pForce) {
+    void add(IForce* pForce) {
         mForces.push_back(pForce);
     }
 
-    void addForces(const std::vector<std::shared_ptr<IForce>>& pForces) {
+    void addForces(const std::vector<IForce*>& pForces) {
         mForces.insert(mForces.end(), pForces.begin(), pForces.end());
     }
 
-    void remove(const std::shared_ptr<IForce>& pForce) {
+    void remove(const IForce* pForce) {
         mForces.erase(std::remove(mForces.begin(), mForces.end(), pForce), mForces.end());
     }
 
-    const std::vector<std::shared_ptr<IForce>>& forces() const {
+    const std::vector<IForce*>& forces() const {
         return mForces;
     }
 
-    std::shared_ptr<IForce> forces(const int pIndex) const {
+    IForce* forces(const int pIndex) const {
         return mForces.at(pIndex);
     }
 
@@ -199,66 +199,67 @@ public:
     }
 
     template<typename T>
-    std::shared_ptr<T> makeForce() {
-        std::shared_ptr<T> mForce;
+    T* makeForce() {
+        T* mForce;
         try {
-            mForce = std::make_shared<T>();
+            mForce = new T();
             mForces.push_back(mForce);
         } catch (const std::exception& ex) {
+            (void) ex;
             mForce = nullptr;
         }
         return mForce;
     }
 
-    std::shared_ptr<Spring> makeSpring(std::shared_ptr<IParticle> pA, std::shared_ptr<IParticle> pB) {
-        auto mSpring = std::make_shared<Spring>(pA, pB);
+    Spring* makeSpring(IParticle* pA, IParticle* pB) {
+        const auto mSpring = new Spring(pA, pB);
         mForces.push_back(mSpring);
         return mSpring;
     }
 
-    std::shared_ptr<Spring> makeSpring(std::shared_ptr<IParticle> pA, std::shared_ptr<IParticle> pB, float pRestLength) {
-        auto mSpring = std::make_shared<Spring>(pA, pB, pRestLength);
+    Spring* makeSpring(IParticle* pA, IParticle* pB, float pRestLength) {
+        const auto mSpring = new Spring(pA, pB, pRestLength);
         mForces.push_back(mSpring);
         return mSpring;
     }
 
-    std::shared_ptr<Spring> makeSpring(std::shared_ptr<IParticle> pA, std::shared_ptr<IParticle> pB, float pSpringConstant, float pSpringDamping) {
-        auto mSpring = std::make_shared<Spring>(pA, pB, pSpringConstant, pSpringDamping);
+    Spring* makeSpring(IParticle* pA, IParticle* pB, float pSpringConstant, float pSpringDamping) {
+        const auto mSpring = new Spring(pA, pB, pSpringConstant, pSpringDamping);
         mForces.push_back(mSpring);
         return mSpring;
     }
 
-    std::shared_ptr<Spring> makeSpring(std::shared_ptr<IParticle> pA, std::shared_ptr<IParticle> pB, float pSpringConstant, float pSpringDamping, float pRestLength) {
-        auto mSpring = std::make_shared<Spring>(pA, pB, pSpringConstant, pSpringDamping, pRestLength);
+    Spring* makeSpring(IParticle* pA, IParticle* pB, float pSpringConstant, float pSpringDamping, float pRestLength) {
+        const auto mSpring = new Spring(pA, pB, pSpringConstant, pSpringDamping, pRestLength);
         mForces.push_back(mSpring);
         return mSpring;
     }
 
-    void add(const std::shared_ptr<IConstraint>& pConstraint) {
+    void add(IConstraint* pConstraint) {
         mConstraints.push_back(pConstraint);
     }
 
-    void addConstraints(const std::vector<std::shared_ptr<IConstraint>>& pConstraints) {
+    void addConstraints(const std::vector<IConstraint*>& pConstraints) {
         mConstraints.insert(mConstraints.end(), pConstraints.begin(), pConstraints.end());
     }
 
-    void remove(const std::shared_ptr<IConstraint>& pConstraint) {
+    void remove(const IConstraint* pConstraint) {
         mConstraints.erase(std::remove(mConstraints.begin(), mConstraints.end(), pConstraint), mConstraints.end());
     }
 
-    const std::vector<std::shared_ptr<IConstraint>>& constraints() const {
+    const std::vector<IConstraint*>& constraints() const {
         return mConstraints;
     }
 
-    std::shared_ptr<IConstraint> constraints(const int pIndex) const {
+    IConstraint* constraints(const int pIndex) const {
         return mConstraints.at(pIndex);
     }
 
-    void setIntegratorRef(const std::shared_ptr<IIntegrator>& pIntegrator) {
+    void setIntegratorRef(IIntegrator* pIntegrator) {
         mIntegrator = pIntegrator;
     }
 
-    std::shared_ptr<IIntegrator> getIntegrator() const {
+    IIntegrator* getIntegrator() const {
         return mIntegrator;
     }
 
@@ -276,7 +277,7 @@ public:
 
 private:
     void handleParticles(const float pDeltaTime) {
-        for (auto& p: mParticles) {
+        for (const auto& p: mParticles) {
             p->force().set(0, 0, 0);
             p->age(p->age() + pDeltaTime);
 

@@ -118,9 +118,7 @@ public:
         return mID;
     }
 
-    static std::shared_ptr<Attractor> make() {
-        return std::make_shared<Attractor>();
+    static Attractor* make() {
+        return new Attractor();
     }
 };
-
-using AttractorPtr = std::shared_ptr<Attractor>;
