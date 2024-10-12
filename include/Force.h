@@ -23,12 +23,16 @@
 
 #pragma once
 
-#include "IParticle.h"
+class Physics;
 
-class IConnection {
+class Force {
 public:
-    virtual ~IConnection() = default;
+    virtual ~Force() = default;
 
-    virtual IParticle* a() = 0;
-    virtual IParticle* b() = 0;
+    virtual void apply(float pDeltaTime, Physics& pParticleSystem) = 0;
+    virtual bool dead() const                                      = 0;
+    virtual void dead(bool pDead)                                  = 0;
+    virtual bool active() const                                    = 0;
+    virtual void active(bool pActiveState)                         = 0;
+    virtual long ID() const                                        = 0;
 };

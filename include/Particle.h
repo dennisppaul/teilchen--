@@ -23,66 +23,32 @@
 
 #pragma once
 
-class Physics;
-
-#include "Particle.h"
+#include "SpatialEntity.h"
 #include "PVector.h"
 
 using namespace umgebung;
 
-class Particle final : public IParticle {
-    float      mAge;
-    bool       mDead;
-    bool       mFixed;
-    PVector    mForce;
-    const long mID;
-    float      mMass;
-    PVector    mOldPosition;
-    PVector    mPosition;
-    float      mRadius;
-    bool       mStill;
-    bool       mTagged;
-    PVector    mVelocity;
-
+class Particle : public SpatialEntity {
 public:
-    Particle()
-        : mAge(0),
-          mDead(false),
-          mFixed(false),
-          mForce(0, 0, 0),
-          mID(0),
-          // mID(Physics::getUniqueID()),
-          mMass(1.0f),
-          mOldPosition(0, 0, 0),
-          mPosition(0, 0, 0),
-          mRadius(0.0f),
-          mStill(false),
-          mTagged(false),
-          mVelocity(0, 0, 0) {}
-
-    bool     fixed() const override { return mFixed; }
-    void     fixed(const bool pFixed) override { mFixed = pFixed; }
-    float    age() const override { return mAge; }
-    void     age(const float pAge) override { mAge = pAge; }
-    float    mass() const override { return mMass; }
-    void     mass(const float pMass) override { mMass = pMass; }
-    PVector& old_position() override { return mOldPosition; }
-    PVector& position() override { return mPosition; }
-    void     setPositionRef(const PVector& pPosition) override { mPosition = pPosition; }
-    PVector& velocity() override { return mVelocity; }
-    PVector& force() override { return mForce; }
-    bool     dead() const override { return mDead; }
-    void     dead(const bool pDead) override { mDead = pDead; }
-    bool     tagged() const override { return mTagged; }
-    void     tag(const bool pTag) override { mTagged = pTag; }
-    float    radius() const override { return mRadius; }
-    void     radius(const float pRadius) override { mRadius = pRadius; }
-    bool     still() const override { return mStill; }
-    void     still(const bool pStill) override { mStill = pStill; }
-    long     ID() const override { return mID; }
-    void     accumulateInnerForce(float pDeltaTime) override {}
-
-    static Particle* make() {
-        return new Particle();
-    }
+    virtual bool     fixed() const                            = 0;
+    virtual void     fixed(bool pFixed)                       = 0;
+    virtual float    age() const                              = 0;
+    virtual void     age(float pAge)                          = 0;
+    virtual float    mass() const                             = 0;
+    virtual void     mass(float pMass)                        = 0;
+    virtual PVector& old_position()                           = 0;
+    virtual void     setPositionRef(const PVector& pPosition) = 0;
+    virtual PVector& velocity()                               = 0;
+    virtual PVector& force()                                  = 0;
+    virtual bool     dead() const                             = 0;
+    virtual void     dead(bool pDead)                         = 0;
+    virtual bool     tagged() const                           = 0;
+    virtual void     tag(bool pTag)                           = 0;
+    virtual void     accumulateInnerForce(float pDeltaTime)   = 0;
+    float            radius() const override                  = 0;
+    virtual void     radius(float pRadius)                    = 0;
+    PVector&         position() override                      = 0;
+    virtual bool     still() const                            = 0;
+    virtual void     still(bool pStill)                       = 0;
+    virtual long     ID() const                               = 0;
 };

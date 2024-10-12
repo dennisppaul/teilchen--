@@ -25,12 +25,12 @@
 
 #include <vector>
 
-#include "IForce.h"
+#include "Force.h"
 #include "PVector.h"
 #include "Physics.h"
 #include "Particle.h"
 
-class Gravity final : public IForce {
+class Gravity final : public Force {
 
     bool       mActive;
     bool       mDead;

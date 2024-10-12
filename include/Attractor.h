@@ -25,12 +25,12 @@
 
 #include <vector>
 
-#include "IForce.h"
+#include "Force.h"
 #include "PVector.h"
 #include "Physics.h"
-#include "IParticle.h"
+#include "Particle.h"
 
-class Attractor final : public IForce {
+class Attractor final : public Force {
 protected:
     PVector    mPosition;
     float      mRadius;

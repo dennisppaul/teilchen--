@@ -24,15 +24,15 @@
 #pragma once
 
 #include <vector>
-#include <memory>
 #include <iostream>
+
 #include "Particle.h"
 #include "Derivate3f.h"
 
 class IntegrationUtil {
 public:
-    static void calculateDerivatives(const std::vector<IParticle*>& pParticles,
-                                     std::vector<Derivate3f>&                       pDerivates) {
+    static void calculateDerivatives(const std::vector<Particle*>& pParticles,
+                                     std::vector<Derivate3f>&      pDerivates) {
         try {
             for (size_t i = 0; i < pParticles.size(); ++i) {
                 if (i < pDerivates.size()) {

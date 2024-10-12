@@ -23,16 +23,16 @@
 
 #pragma once
 
-#include "IForce.h"
-#include "IConnection.h"
-#include "IParticle.h"
+#include "Force.h"
+#include "Connection.h"
+#include "Particle.h"
 #include "Util.h"
 #include "PVector.h"
 
-class Spring final : public IForce, public IConnection {
+class Spring final : public Force, public Connection {
 
-    IParticle* mA;
-    IParticle* mB;
+    Particle* mA;
+    Particle* mB;
     bool       mActive;
     bool       mDead;
     bool       mOneWay;
@@ -44,23 +44,23 @@ class Spring final : public IForce, public IConnection {
 public:
 #define USE_FAST_SQRT 1
 
-    Spring(IParticle* pA, IParticle* pB)
+    Spring(Particle* pA, Particle* pB)
         : Spring(pA,
                  pB,
                  2.0f,
                  0.1f,
                  PVector::dist(pA->position(), pB->position())) {}
 
-    Spring(IParticle* pA,
-           IParticle* pB,
+    Spring(Particle* pA,
+           Particle* pB,
            float      pSpringConstant,
            float      pSpringDamping,
            float      pRestLength);
 
-    Spring(IParticle* pA, IParticle* pB, const float pRestLength)
+    Spring(Particle* pA, Particle* pB, const float pRestLength)
         : Spring(pA, pB, 2.0f, 0.1f, pRestLength) {}
 
-    Spring(IParticle* pA, IParticle* pB, const float pSpringConstant, const float pSpringDamping)
+    Spring(Particle* pA, Particle* pB, const float pSpringConstant, const float pSpringDamping)
         : Spring(pA, pB, pSpringConstant, pSpringDamping, PVector::dist(pA->position(), pB->position())) {}
 
     void setRestLengthByPosition() {
@@ -75,19 +75,19 @@ public:
         mRestLength = pRestLength;
     }
 
-    IParticle* a() override {
+    Particle* a() override {
         return mA;
     }
 
-    IParticle* b() override {
+    Particle* b() override {
         return mB;
     }
 
-    IParticle* a(IParticle* pA) {
+    Particle* a(Particle* pA) {
         return mA = pA;
     }
 
-    IParticle* b(IParticle* pB) {
+    Particle* b(Particle* pB) {
         return mB = pB;
     }
 
@@ -180,19 +180,19 @@ public:
         return mID;
     }
 
-    static Spring* make(IParticle* pA, IParticle* pB) {
+    static Spring* make(Particle* pA, Particle* pB) {
         return new Spring(pA, pB);
     }
 
-    static Spring* make(IParticle* pA, IParticle* pB, float pSpringConstant, float pSpringDamping, float pRestLength) {
+    static Spring* make(Particle* pA, Particle* pB, float pSpringConstant, float pSpringDamping, float pRestLength) {
         return new Spring(pA, pB, pSpringConstant, pSpringDamping, pRestLength);
     }
 
-    static Spring* make(IParticle* pA, IParticle* pB, float pRestLength) {
+    static Spring* make(Particle* pA, Particle* pB, float pRestLength) {
         return new Spring(pA, pB, pRestLength);
     }
 
-    static Spring* make(IParticle* pA, IParticle* pB, float pSpringConstant, float pSpringDamping) {
+    static Spring* make(Particle* pA, Particle* pB, float pSpringConstant, float pSpringDamping) {
         return new Spring(pA, pB, pSpringConstant, pSpringDamping);
     }
 };

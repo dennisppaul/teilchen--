@@ -38,7 +38,7 @@ class UmgebungApp final : public PApplet {
 
         /* create some particles */
         for (int i = 0; i < 1000; i++) {
-            IParticle* mParticle = mPhysics.makeParticle();
+            Particle* mParticle = mPhysics.makeParticle();
             mParticle->position().set(random(width), random(height));
             mParticle->mass(random(1.0f, 5.0f));
         }
@@ -64,7 +64,7 @@ class UmgebungApp final : public PApplet {
         fill(0);
         noStroke();
         for (int i = 0; i < mPhysics.particles().size(); i++) {
-            IParticle* mParticle = mPhysics.particles(i);
+            Particle* mParticle = mPhysics.particles(i);
             ellipse(mParticle->position().x, mParticle->position().y, 5, 5);
         }
 

@@ -23,11 +23,9 @@
 
 #pragma once
 
-#include "Physics.h"
-
-class IIntegrator {
+class Integrator {
 public:
-    virtual ~IIntegrator() = default;
+    virtual ~Integrator() = default;
 
     virtual void step(float pDeltaTime, Physics& pParticleSystem) = 0;
 };

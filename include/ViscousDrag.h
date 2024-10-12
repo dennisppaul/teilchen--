@@ -23,12 +23,12 @@
 
 #pragma once
 
-#include "IForce.h"
+#include "Force.h"
 #include "Physics.h"
-#include "IParticle.h"
+#include "Particle.h"
 #include "Verlet.h"
 
-class ViscousDrag : public IForce {
+class ViscousDrag : public Force {
 public:
     float      coefficient;
     bool       mActive;

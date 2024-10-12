@@ -24,11 +24,12 @@
 #pragma once
 
 #include <vector>
+
 #include "Physics.h"
-#include "IIntegrator.h"
+#include "Integrator.h"
 #include "Derivate3f.h"
 
-class Midpoint final : public IIntegrator {
+class Midpoint final : public Integrator {
     std::vector<Derivate3f> mK1;
 
 public:

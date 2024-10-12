@@ -25,12 +25,12 @@
 
 #include <vector>
 
-#include "IIntegrator.h"
+#include "Integrator.h"
 #include "PVector.h"
-#include "IParticle.h"
+#include "Particle.h"
 #include "Physics.h"
 
-class Verlet final : public IIntegrator {
+class Verlet final : public Integrator {
     float   mDamping;
     PVector temp1;
     PVector temp2;
@@ -59,7 +59,7 @@ public:
     }
 
 private:
-    void integrate(float pDeltaTime, IParticle& pParticle) {
+    void integrate(float pDeltaTime, Particle& pParticle) {
         const PVector mOldPosition = pParticle.position();
 
         pParticle.velocity().set(PVector::sub(pParticle.position(), pParticle.old_position()));

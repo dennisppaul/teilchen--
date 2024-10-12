@@ -23,12 +23,12 @@
 
 #pragma once
 
-#include "IConstraint.h"
+#include "Constraint.h"
 #include "PVector.h"
 #include "Physics.h"
 #include <cmath>
 
-class Teleporter final : public IConstraint {
+class Teleporter final : public Constraint {
 protected:
     bool       mActive;
     bool       mDead;

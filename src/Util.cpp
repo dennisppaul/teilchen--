@@ -24,10 +24,10 @@
 #include "Util.h"
 #include "Physics.h"
 
-IParticle* Util::findParticleByProximity(Physics* pPhysics, float x, float y, float z, float pSelectionRadius) {
+Particle* Util::findParticleByProximity(Physics* pPhysics, float x, float y, float z, float pSelectionRadius) {
     return findParticleByProximity(pPhysics->particles(), PVector(x, y, z), pSelectionRadius);
 }
 
-IParticle* Util::findParticleByProximity(Physics* pPhysics, const PVector& pPosition, float pSelectionRadius) {
+Particle* Util::findParticleByProximity(Physics* pPhysics, const PVector& pPosition, float pSelectionRadius) {
     return findParticleByProximity(pPhysics->particles(), pPosition, pSelectionRadius);
 }

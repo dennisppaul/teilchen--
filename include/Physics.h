@@ -26,11 +26,11 @@
 #include <iostream>
 #include <vector>
 
-#include "IParticle.h"
-#include "IForce.h"
-#include "IConstraint.h"
-#include "IIntegrator.h"
 #include "Particle.h"
+#include "Force.h"
+#include "Constraint.h"
+#include "Integrator.h"
+#include "BasicParticle.h"
 #include "PVector.h"
 #include "Spring.h"
 
@@ -49,10 +49,10 @@ public:
     bool HINT_SET_VELOCITY_FROM_PREVIOUS_POSITION = true;
 
 private:
-    std::vector<IConstraint*> mConstraints;
-    std::vector<IForce*>      mForces;
-    std::vector<IParticle*>   mParticles;
-    IIntegrator*              mIntegrator;
+    std::vector<Constraint*> mConstraints;
+    std::vector<Force*>      mForces;
+    std::vector<Particle*>   mParticles;
+    Integrator*              mIntegrator;
 
 public:
     Physics();
@@ -61,7 +61,7 @@ public:
         return ++oID;
     }
 
-    bool add(IParticle* pParticle, const bool pPreventDuplicates = false) {
+    bool add(Particle* pParticle, const bool pPreventDuplicates = false) {
         if (pPreventDuplicates) {
             const auto it = std::find(mParticles.begin(), mParticles.end(), pParticle);
             if (it != mParticles.end()) {
@@ -72,66 +72,66 @@ public:
         return true;
     }
 
-    void add(IParticle* pParticle) {
+    void add(Particle* pParticle) {
         mParticles.push_back(pParticle);
     }
 
-    void add(const std::vector<IParticle*>& pParticles) {
+    void add(const std::vector<Particle*>& pParticles) {
         mParticles.insert(mParticles.end(), pParticles.begin(), pParticles.end());
     }
 
-    void remove(IParticle* pParticle) {
+    void remove(Particle* pParticle) {
         mParticles.erase(std::remove(mParticles.begin(), mParticles.end(), pParticle), mParticles.end());
     }
 
-    void remove(const std::vector<IParticle*>& pParticles) {
+    void remove(const std::vector<Particle*>& pParticles) {
         for (const auto& p: pParticles) {
             remove(p);
         }
     }
 
-    const std::vector<IParticle*>& particles() const {
+    const std::vector<Particle*>& particles() const {
         return mParticles;
     }
 
-    IParticle* particles(const int pIndex) const {
+    Particle* particles(const int pIndex) const {
         return mParticles.at(pIndex);
     }
 
-    Particle* makeParticle() {
-        const auto mParticle = new Particle();
+    BasicParticle* makeParticle() {
+        const auto mParticle = new BasicParticle();
         mParticles.push_back(mParticle);
         return mParticle;
     }
 
-    Particle* makeParticle(const PVector& pPosition) {
+    BasicParticle* makeParticle(const PVector& pPosition) {
         const auto mParticle = makeParticle();
         mParticle->setPositionRef(pPosition);
         mParticle->old_position() = mParticle->position();
         return mParticle;
     }
 
-    Particle* makeParticle(const float x, const float y) {
+    BasicParticle* makeParticle(const float x, const float y) {
         const auto mParticle = makeParticle();
         mParticle->position().set(x, y);
         mParticle->old_position() = mParticle->position();
         return mParticle;
     }
 
-    Particle* makeParticle(const float x, const float y, const float z) {
+    BasicParticle* makeParticle(const float x, const float y, const float z) {
         const auto mParticle = makeParticle();
         mParticle->position().set(x, y, z);
         mParticle->old_position() = mParticle->position();
         return mParticle;
     }
 
-    Particle* makeParticle(const float x, const float y, const float z, const float pMass) {
+    BasicParticle* makeParticle(const float x, const float y, const float z, const float pMass) {
         const auto mParticle = makeParticle(x, y, z);
         mParticle->mass(pMass);
         return mParticle;
     }
 
-    Particle* makeParticle(const PVector& pPosition, const float pMass) {
+    BasicParticle* makeParticle(const PVector& pPosition, const float pMass) {
         const auto mParticle = makeParticle(pPosition);
         mParticle->mass(pMass);
         return mParticle;
@@ -164,23 +164,23 @@ public:
     //     return true;
     // }
 
-    void add(IForce* pForce) {
+    void add(Force* pForce) {
         mForces.push_back(pForce);
     }
 
-    void addForces(const std::vector<IForce*>& pForces) {
+    void addForces(const std::vector<Force*>& pForces) {
         mForces.insert(mForces.end(), pForces.begin(), pForces.end());
     }
 
-    void remove(const IForce* pForce) {
+    void remove(const Force* pForce) {
         mForces.erase(std::remove(mForces.begin(), mForces.end(), pForce), mForces.end());
     }
 
-    const std::vector<IForce*>& forces() const {
+    const std::vector<Force*>& forces() const {
         return mForces;
     }
 
-    IForce* forces(const int pIndex) const {
+    Force* forces(const int pIndex) const {
         return mForces.at(pIndex);
     }
 
@@ -211,55 +211,55 @@ public:
         return mForce;
     }
 
-    Spring* makeSpring(IParticle* pA, IParticle* pB) {
+    Spring* makeSpring(Particle* pA, Particle* pB) {
         const auto mSpring = new Spring(pA, pB);
         mForces.push_back(mSpring);
         return mSpring;
     }
 
-    Spring* makeSpring(IParticle* pA, IParticle* pB, float pRestLength) {
+    Spring* makeSpring(Particle* pA, Particle* pB, float pRestLength) {
         const auto mSpring = new Spring(pA, pB, pRestLength);
         mForces.push_back(mSpring);
         return mSpring;
     }
 
-    Spring* makeSpring(IParticle* pA, IParticle* pB, float pSpringConstant, float pSpringDamping) {
+    Spring* makeSpring(Particle* pA, Particle* pB, float pSpringConstant, float pSpringDamping) {
         const auto mSpring = new Spring(pA, pB, pSpringConstant, pSpringDamping);
         mForces.push_back(mSpring);
         return mSpring;
     }
 
-    Spring* makeSpring(IParticle* pA, IParticle* pB, float pSpringConstant, float pSpringDamping, float pRestLength) {
+    Spring* makeSpring(Particle* pA, Particle* pB, float pSpringConstant, float pSpringDamping, float pRestLength) {
         const auto mSpring = new Spring(pA, pB, pSpringConstant, pSpringDamping, pRestLength);
         mForces.push_back(mSpring);
         return mSpring;
     }
 
-    void add(IConstraint* pConstraint) {
+    void add(Constraint* pConstraint) {
         mConstraints.push_back(pConstraint);
     }
 
-    void addConstraints(const std::vector<IConstraint*>& pConstraints) {
+    void addConstraints(const std::vector<Constraint*>& pConstraints) {
         mConstraints.insert(mConstraints.end(), pConstraints.begin(), pConstraints.end());
     }
 
-    void remove(const IConstraint* pConstraint) {
+    void remove(const Constraint* pConstraint) {
         mConstraints.erase(std::remove(mConstraints.begin(), mConstraints.end(), pConstraint), mConstraints.end());
     }
 
-    const std::vector<IConstraint*>& constraints() const {
+    const std::vector<Constraint*>& constraints() const {
         return mConstraints;
     }
 
-    IConstraint* constraints(const int pIndex) const {
+    Constraint* constraints(const int pIndex) const {
         return mConstraints.at(pIndex);
     }
 
-    void setIntegratorRef(IIntegrator* pIntegrator) {
+    void setIntegratorRef(Integrator* pIntegrator) {
         mIntegrator = pIntegrator;
     }
 
-    IIntegrator* getIntegrator() const {
+    Integrator* getIntegrator() const {
         return mIntegrator;
     }
 

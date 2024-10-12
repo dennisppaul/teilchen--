@@ -28,7 +28,7 @@
 #include <random>
 
 #include "PVector.h"
-#include "IParticle.h"
+#include "Particle.h"
 // #include "TriangleDeflector.h"
 // #include "TriangleDeflectorIndexed.h"
 
@@ -85,15 +85,15 @@ public:
         return v * (1.5f - half * v * v);
     }
 
-    static IParticle* findParticleByProximity(Physics* pPhysics, float x, float y, float z, float pSelectionRadius);
-    static IParticle* findParticleByProximity(Physics* pPhysics, const PVector& pPosition, float pSelectionRadius);
+    static Particle* findParticleByProximity(Physics* pPhysics, float x, float y, float z, float pSelectionRadius);
+    static Particle* findParticleByProximity(Physics* pPhysics, const PVector& pPosition, float pSelectionRadius);
 
-    static IParticle* findParticleByProximity(const std::vector<IParticle*>& pParticles, float x, float y, float z, float pSelectionRadius) {
+    static Particle* findParticleByProximity(const std::vector<Particle*>& pParticles, float x, float y, float z, float pSelectionRadius) {
         return findParticleByProximity(pParticles, PVector(x, y, z), pSelectionRadius);
     }
 
-    static IParticle* findParticleByProximity(const std::vector<IParticle*>& pParticles, const PVector& pPosition, float pSelectionRadius) {
-        std::vector<IParticle*> mCloseParticles;
+    static Particle* findParticleByProximity(const std::vector<Particle*>& pParticles, const PVector& pPosition, float pSelectionRadius) {
+        std::vector<Particle*> mCloseParticles;
         for (const auto& p: pParticles) {
             if (PVector::dist(pPosition, p->position()) < pSelectionRadius) {
                 mCloseParticles.push_back(p);
@@ -102,7 +102,7 @@ public:
         if (mCloseParticles.empty()) {
             return nullptr;
         }
-        IParticle* mClosestParticle = mCloseParticles[0];
+        Particle* mClosestParticle = mCloseParticles[0];
         float      mClosestDistance = PVector::dist(pPosition, mClosestParticle->position());
         for (size_t i = 1; i < mCloseParticles.size(); i++) {
             const float mDistance = PVector::dist(pPosition, mCloseParticles[i]->position());
@@ -137,7 +137,7 @@ public:
         v1.z *= v2.z;
     }
 
-    static void setVelocityAndOldPosition(IParticle* pParticle, const PVector& pNewVelocity) {
+    static void setVelocityAndOldPosition(Particle* pParticle, const PVector& pNewVelocity) {
         pParticle->velocity().set(pNewVelocity);
         const PVector mOldPosition = PVector::sub(pParticle->position(), pParticle->velocity());
         pParticle->old_position().set(mOldPosition);

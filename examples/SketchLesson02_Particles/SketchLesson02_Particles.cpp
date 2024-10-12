@@ -38,7 +38,7 @@ class UmgebungApp final : public PApplet {
 
         /* remove particles right before they hit the edge of the screen */
         for (int i = 0; i < mPhysics.particles().size(); i++) {
-            IParticle* mParticle = mPhysics.particles(i);
+            Particle* mParticle = mPhysics.particles(i);
             if (mParticle->position().y > height * 0.9f) {
                 /* particles can be marked dead and will be removed on the next call to `Physics.step()` */
                 mParticle->dead(true);
@@ -54,7 +54,7 @@ class UmgebungApp final : public PApplet {
         fill(0);
         noStroke();
         for (int i = 0; i < mPhysics.particles().size(); i++) {
-            IParticle* mParticle = mPhysics.particles(i);
+            Particle* mParticle = mPhysics.particles(i);
             ellipse(mParticle->position().x, mParticle->position().y, 5, 5);
         }
 

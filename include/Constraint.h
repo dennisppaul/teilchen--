@@ -23,16 +23,14 @@
 
 #pragma once
 
-class Physics;
-
-class IForce {
+class Constraint {
 public:
-    virtual ~IForce() = default;
+    virtual ~Constraint() = default;
 
-    virtual void apply(float pDeltaTime, Physics& pParticleSystem) = 0;
-    virtual bool dead() const                                      = 0;
-    virtual void dead(bool pDead)                                  = 0;
-    virtual bool active() const                                    = 0;
-    virtual void active(bool pActiveState)                         = 0;
-    virtual long ID() const                                        = 0;
+    virtual void apply(Physics& pParticleSystem) = 0;
+    virtual bool active() const                  = 0;
+    virtual void active(bool pActiveState)       = 0;
+    virtual bool dead() const                    = 0;
+    virtual void dead(bool pDead)                = 0;
+    virtual long ID() const                      = 0;
 };

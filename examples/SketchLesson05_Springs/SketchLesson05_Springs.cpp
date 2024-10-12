@@ -14,7 +14,7 @@ class UmgebungApp final : public PApplet {
      */
 
     /* create a particle system */
-    Physics   mPhysics;
+    Physics    mPhysics;
     Particle* mRoot = nullptr;
 
     void settings() override {
@@ -36,9 +36,9 @@ class UmgebungApp final : public PApplet {
         /* create a particle at mouse position and connect it to the root particle through a spring */
         if (isMousePressed) {
             /* find the particle closest to the mouse */
-            IParticle* mNeighborParticle = Util::findParticleByProximity(&mPhysics, mouseX, mouseY, 0, 20);
+            Particle* mNeighborParticle = Util::findParticleByProximity(&mPhysics, mouseX, mouseY, 0, 20);
             if (mNeighborParticle != nullptr) {
-                IParticle* mParticle = mPhysics.makeParticle(mouseX, mouseY, 0);
+                Particle* mParticle = mPhysics.makeParticle(mouseX, mouseY, 0);
                 Spring*    mSpring   = mPhysics.makeSpring(mNeighborParticle, mParticle);
                 /* restlength defines the desired length of the spring. in this case it is the
                 distance between the two particles. */
