@@ -28,13 +28,11 @@ class UmgebungApp final : public PApplet {
 
     void settings() override {
         size(640, 480);
-        text("Stable Quad", 10, 10);
     }
 
     void setup() override {
         /* use `RungeKutta` as it produces more stable results in applications like these */
-        delete mPhysics.getIntegrator();
-        mPhysics.setIntegratorRef(new RungeKutta());
+        mPhysics.replace_integrator(new RungeKutta());
 
         Gravity* mGravity   = Gravity::make();
         mGravity->force().y = 98.1f;

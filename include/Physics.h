@@ -264,6 +264,11 @@ public:
         return mIntegrator;
     }
 
+    void replace_integrator(Integrator* pIntegrator) {
+        delete mIntegrator;
+        mIntegrator = pIntegrator;
+    }
+
     void step(const float pDeltaTime, const int pIterations) {
         for (int i = 0; i < pIterations; ++i) {
             step(pDeltaTime / static_cast<float>(pIterations));
