@@ -16,3 +16,5 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/in
 #target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 #target_link_libraries(${PROJECT_NAME} PUBLIC ${SOME_OTHER_LIBRARIES})
+
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
